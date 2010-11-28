@@ -1,0 +1,41 @@
+This is a demonstration of how to use JSLint from an Apache Ant buildfile.
+In its current form it requires the Rhino JavaScript engine, but it
+should be possible to modify the jslint script to change that dependency.
+
+The bin directory contains two bash scripts, jslint and jslintall,
+which can be placed in any directory that is in PATH.
+The Ant buildfile build.xml uses jslintall which uses jslint.
+Modify the jslint script to tell it the location of
+jslint.js and Rhino's js.jar which must be downloaded separately.
+See http://jslint.com and http://www.mozilla.org/rhino/.
+It should be possible to write equivalent Windows .bat scripts.
+
+The docroot directory contains sample HTML, CSS and JavaScript source files
+that are checked using JSLint.  To demonstrate that JSLint is being run,
+introduce errors in these files.  For example,
+* in demo.html, change "</body>" to "</bodyx>"
+* in demo.css, change "purple" to "purplex"
+* in demo.js, change "===" to "=="
+
+To run JSLint from Ant on all the files in the docroot directory,
+cd to the directory containing build.xml (which is the
+parent directory of the docroot directory) and enter "ant".
+This will create a hidden directory in the docroot directory
+named ".bookkeeping".  The results of running JSLint on each
+file under docroot are written to this directory.
+For example, the results for "docroot/demo.js"
+are written to docroot/.bookkeeping/demo.js_lint.
+
+If JSLint finds no issues, the file written under .bookkeeping
+will contain "jslint: No problems found in {filename}"
+and the file will be retained.
+If JSLint finds any issues, the file will be
+output to the shell/terminal window and deleted.
+
+When the jslint script is run again, if a matching .bookkeeping file
+is found that is newer than the source file being checked,
+the JSLint tool is not actually run again since that version of
+the source file has already been found to have no issues.
+
+Suggestions for improvements to this scheme are welcomed!
+Send them to r.mark.volkmann@gmail.com.

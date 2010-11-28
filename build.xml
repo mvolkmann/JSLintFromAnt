@@ -1,0 +1,8 @@
+<project name="JSLintFromAnt" default="jslint">
+
+  <target name="jslint"
+    description="runs JSLint on all .html, .css and .js files">
+    <exec executable="jslintall" dir="docroot" failonerror="true"/>
+  </target>
+
+</project>

@@ -1,0 +1,19 @@
+#!/bin/bash
+# This runs JSLint on all .js, .html and .css files in the current directory.
+
+for file in *.html *.css *.js
+do
+  case $file in
+    */jquery*.css)
+      ;; # Don't run JSLint on jQuery .css files because they don't conform.
+    */jquery*.js)
+      ;; # Don't run JSLint on jQuery .js files because they don't conform.
+    *)
+      jslint $file
+      status=$?
+      if [ $status -ne 0 ]; then
+        echo "fix above issues in $file"
+        exit $status
+      fi
+  esac
+done

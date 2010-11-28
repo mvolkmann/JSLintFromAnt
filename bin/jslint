@@ -1,0 +1,48 @@
+#!/bin/bash
+# This runs JSLint on a single .js, .html or .css file
+# specified as a command-line argument.
+# It requires the Rhino JavaScript engine.
+# Copy this file to a directory in PATH.
+# Usage: jslint {file-path}
+
+JS_DIR=/Users/Mark/Documents/Programming/Languages/JavaScript
+JSLINT_DIR=$JS_DIR/JSLint
+RHINO_HOME=$JS_DIR/Rhino/rhino1_7R2
+RHINO_JAR=$RHINO_HOME/js.jar
+
+if [ $# -ne 1 ]; then
+  echo "usage: jslint {file-path}"
+  exit 1
+fi
+
+# Make sure the .bookkeeping subdirectory exists.
+mkdir .bookkeeping 2> /dev/null
+
+file=$1
+lintfile=.bookkeeping/${file}_lint
+status=0
+
+# If the source file has been modified
+# since the last time jslint was run on it ...
+if [ "$file" -nt "$lintfile" ]
+then
+  echo "running JSLint on $file"
+java -cp $RHINO_JAR \
+  org.mozilla.javascript.tools.shell.Main \
+  $JSLINT_DIR/jslint.js \
+  $file > $lintfile
+  status=$?
+
+  # If the lint output file isn't empty ...
+  #if [[ -s $lintfile ]] ; then
+  lines=$(wc -l $lintfile | awk '{print $1}')
+  if [[ $lines > 1 ]] ; then
+    cat $lintfile
+
+    # Delete the lint output file so JSLint will be run on the file again
+    # to verify that all the issues were fixed.
+    rm -f $lintfile
+  fi
+fi
+
+exit $status
